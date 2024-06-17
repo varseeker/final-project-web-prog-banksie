@@ -59,43 +59,46 @@
 @endsection
 
 @section('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.0.0-release/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.0.0-release/chart.min.js"></script>
     <script>
-        // Grafik Transaksi Bulanan
-        const transaksiBulananChart = new Chart(document.getElementById('transaksiBulananChart'), {
-            type: 'bar',
-            data: {
-                labels: {{ json_encode($transaksiBulananLabels) }},
-                datasets: [{
-                    label: 'Jumlah Transaksi',
-                    data: {{ json_encode($transaksiBulananData) }},
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgb(75, 192, 192)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
+        document.addEventListener('DOMContentLoaded', function () {
+            // Grafik Transaksi Bulanan
+            const ctxTransaksiBulanan = document.getElementById('transaksiBulananChart').getContext('2d');
+            new Chart(ctxTransaksiBulanan, {
+                type: 'bar',
+                data: {
+                    labels: {!! json_encode($transaksiBulananLabels) !!},
+                    datasets: [{
+                        label: 'Jumlah Transaksi',
+                        data: {!! json_encode($transaksiBulananData) !!},
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgb(75, 192, 192)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
                             beginAtZero: true
                         }
+                    }
+                }
+            });
+
+            // Grafik Saldo Per Jenis Rekening
+            const ctxSaldoRekening = document.getElementById('saldoRekeningChart').getContext('2d');
+            new Chart(ctxSaldoRekening, {
+                type: 'pie',
+                data: {
+                    labels: {!! json_encode($saldoRekeningLabels) !!},
+                    datasets: [{
+                        data: {!! json_encode($saldoRekeningData) !!},
+                        backgroundColor: ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5'],
+                        hoverBackgroundColor: ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5']
                     }]
                 }
-            }
-        });
-
-        // Grafik Saldo Per Jenis Rekening
-        const saldoRekeningChart = new Chart(document.getElementById('saldoRekeningChart'), {
-            type: 'pie',
-            data: {
-                labels: {{ json_encode($saldoRekeningLabels) }},
-                datasets: [{
-                    data: {{ json_encode($saldoRekeningData) }},
-                    backgroundColor: ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5'],
-                    hoverBackgroundColor: ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5']
-                }]
-            }
+            });
         });
     </script>
 @endsection

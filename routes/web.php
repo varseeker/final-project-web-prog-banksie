@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NasabahController;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +18,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth'])->group(function () {
     // Route::get('/home', [App\Http\Controllers\HomeController::class,'index'])->name('home');
     
-    Route::get('/home', [App\Http\Controllers\DashboardController::class,'index'])->name('home');
+    Route::get('/dashboard', [App\Http\Controllers\DashboardController::class,'index'])->name('dashboard');
+    Route::resource('nasabah', NasabahController::class);
 
     Route::post('/board', [App\Http\Controllers\ExpenseBoardsController::class,'store']);
     Route::delete('/board', [App\Http\Controllers\ExpenseBoardsController::class,'destroy']);

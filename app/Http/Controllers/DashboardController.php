@@ -16,15 +16,28 @@ class DashboardController extends Controller
         // $rekeningAktif = Account::where('status', 'active')->count();
         // $transaksiTerbaru = Transaction::orderBy('created_at', 'desc')->limit(5)->get();
         // $nasabahBaru = Account::where('created_at', '>=', Carbon::now()->subDays(7))->count();
-        $totalSaldo = 0;
-        $rekeningAktif = 0;
-        $transaksiTerbaru = [];
-        $nasabahBaru = 0;
-        // Data for charts (assuming you have logic to get this data)
-        $transaksiBulananLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-        $transaksiBulananData = [100, 150, 200, 180, 120, 160]; // Replace with actual data logic
+        // $totalSaldo = 0;
+        // $rekeningAktif = 0;
+        // $transaksiTerbaru = [];
+        // $nasabahBaru = 0;
+        // // Data for charts (assuming you have logic to get this data)
+        // $transaksiBulananLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+        // $transaksiBulananData = [100, 150, 200, 180, 120, 160]; // Replace with actual data logic
+        // $saldoRekeningLabels = ['Tabungan', 'Giro', 'Deposito'];
+        // $saldoRekeningData = [50, 30, 20]; // Replace with actual data logic
+        
+        $transaksiBulananLabels = ['Januari', 'Februari', 'Maret', 'April']; // Contoh data
+        $transaksiBulananData = [10, 20, 30, 40]; // Contoh data
         $saldoRekeningLabels = ['Tabungan', 'Giro', 'Deposito'];
-        $saldoRekeningData = [50, 30, 20]; // Replace with actual data logic
+        $saldoRekeningData = [50000, 30000, 20000];
+        $totalSaldo = 1000000;
+        $rekeningAktif = 150;
+        $transaksiTerbaru = [
+            (object) ['jenisTransaksi' => 'Transfer', 'jumlah' => 100000],
+            (object) ['jenisTransaksi' => 'Tarik Tunai', 'jumlah' => 200000]
+        ];
+        $nasabahBaru = 16;
+        
 
         return view('home', compact(
             'totalSaldo',
