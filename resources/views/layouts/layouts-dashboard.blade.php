@@ -60,8 +60,8 @@
             margin-left: 0;
         }
         .toggle-btn {
-            position: fixed;
-            top: 20px;
+            /* position: fixed; */
+            /* top: 20px; */
             left: 270px;
             z-index: 1100;
             background-color: #333;
@@ -105,62 +105,61 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm shifted">
         <div class="container">
-          <a href="{{ url('/') }}" class="navbar-brand ms-5"><img src="{{ asset('img/logo-with-name-black.png') }}" alt="Web Banking Hero Image" class="img-fluid w-25"></a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
-            <ul class="navbar-nav">
-                @guest
-                    @if (Route::has('login'))
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                        </li>
-                    @endif
-    
-                    @if (Route::has('register'))
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                        </li>
-                    @endif
-                @else
-                    <li class="nav-item dropdown">
-                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                            {{ Auth::user()->name }}
-                        </a>
-    
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{{ route('logout') }}"
-                               onclick="event.preventDefault();
-                                             document.getElementById('logout-form').submit();">
-                                {{ __('Logout') }}
+            <button class="toggle-btn" id="toggle-sidebar">☰</button>
+            <a href="{{ url('/') }}" class="navbar-brand ms-2">
+                <img src="{{ asset('img/logo-with-name-black.png') }}" alt="Web Banking Hero Image" class="img-fluid" style="height: 40px;">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav ms-auto">
+                    <!-- Authentication Links -->
+                    @guest
+                        @if (Route::has('login'))
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                            </li>
+                        @endif
+                        @if (Route::has('register'))
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                            </li>
+                        @endif
+                    @else
+                        <li class="nav-item dropdown">
+                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{ Auth::user()->name }}
                             </a>
-    
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                @csrf
-                            </form>
-                        </div>
-                    </li>
-                @endguest
-            </ul>
-          </div>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{{ route('logout') }}"
+                                   onclick="event.preventDefault();
+                                             document.getElementById('logout-form').submit();">
+                                    {{ __('Logout') }}
+                                </a>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    @csrf
+                                </form>
+                            </div>
+                        </li>
+                    @endguest
+                </ul>
+            </div>
         </div>
-      </nav>
-    <button class="toggle-btn" id="toggle-sidebar">☰</button>
+    </nav>
     <div class="sidebar" id="sidebar">
         <ul class="sidebar-list">
             <li><a href="{{ route('dashboard') }}"><i class="fas fa-home"></i> Dashboard</a></li>
-            <li><a href="{{ route('nasabah.index') }}"><i class="fas fa-home"></i> Nasabah</a></li>
+            <li><a href="{{ route('nasabah.index') }}"><i class="fas fa-user"></i> Nasabah</a></li>
         </ul>
     </div>
     <div class="main-content" id="main-content">
         @yield('content')
     </div>
-    
-    <footer class="footer py-3 bg-white shadow-sm shifted"> 
+    <footer class="footer py-3 bg-white shadow-sm shifted" style="border-top: outset"> 
         <div class="container">
             <div class="row">
-                <div class="col-md-6 ms-5">
+                <div class="col-md-6">
                     <h2>Bank Sharia Empower</h2>
                     <p>"Empowering Together with sharia."</p>
                     <ul class="list-unstyled d-flex text-muted"> 

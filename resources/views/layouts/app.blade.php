@@ -20,7 +20,6 @@
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
-<>
     @include('layouts.navbar')           
     <div style="margin-top: 1.5rem">
         {{-- <nav class="navbar navbar-expand-md shadow-sm">

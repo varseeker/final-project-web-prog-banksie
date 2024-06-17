@@ -1,9 +1,41 @@
-@extends('layouts/layouts-dashboard')
+@extends('layouts.layouts-dashboard')
 
 @section('content')
+<style>
+    .pagination-wrapper nav {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .pagination-wrapper .pagination {
+        margin: 0;
+    }
+
+    .pagination .page-link svg {
+        width: 1em;
+        height: 1em;
+    }
+
+    .pagination .page-item.active .page-link {
+        /* background-color: #007bff; */
+        /* border-color: #007bff; */
+    }
+
+    .pagination .page-link {
+        /* color: #007bff; */
+    }
+
+    .pagination .page-link:hover {
+        /* color: #0056b3; */
+    }
+</style>
+
+
+</style>
 <div class="container">
     <h1>Data Nasabah</h1>
-    <a href="{{ route('nasabah.create') }}" class="btn btn-primary">Tambah Nasabah</a>
+    <a href="{{ route('nasabah.create') }}" class="btn btn-primary mb-3">Tambah Nasabah</a>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -40,5 +72,8 @@
             @endforeach
         </tbody>
     </table>
+    <div class="d-flex justify-content-center mt-3">
+        {{ $nasabah->links('pagination::bootstrap-5') }}
+    </div>
 </div>
 @endsection

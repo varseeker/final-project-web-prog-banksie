@@ -11,7 +11,7 @@ class Nasabah extends Model
     protected $table = 'nasabah'; // Sesuaikan dengan nama tabel yang benar
     protected $primaryKey = 'id_nasabah'; // Jika nama primary key berbeda, sesuaikan di sini
     // Sisanya sesuaikan dengan kolom-kolom yang ada dalam tabel
-    public $timestamps = false;
+    public $incrementing = true;
     protected $fillable = [
         'nama',
         'alamat',
