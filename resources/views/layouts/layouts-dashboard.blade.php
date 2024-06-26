@@ -151,6 +151,7 @@
         <ul class="sidebar-list">
             <li><a href="{{ route('dashboard') }}"><i class="fas fa-home"></i> Dashboard</a></li>
             <li><a href="{{ route('nasabah.index') }}"><i class="fas fa-user"></i> Nasabah</a></li>
+            <li><a href="{{ route('rekening.index') }}"><i class="fas fa-book"></i> Rekening</a></li>
         </ul>
     </div>
     <div class="main-content" id="main-content">
