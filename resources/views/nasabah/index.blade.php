@@ -46,7 +46,7 @@
                 <th>Email</th>
                 <th>Tanggal Lahir</th>
                 <th>Status Pekerjaan</th>
-                <th>Aksi</th>
+                <th width="280px">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -60,12 +60,12 @@
                 <td>{{ $n->tanggal_lahir }}</td>
                 <td>{{ $n->status_pekerjaan }}</td>
                 <td>
-                    <a href="{{ route('nasabah.show', $n->id_nasabah) }}" class="btn btn-info">Detail</a>
-                    <a href="{{ route('nasabah.edit', $n->id_nasabah) }}" class="btn btn-warning">Edit</a>
                     <form action="{{ route('nasabah.destroy', $n->id_nasabah) }}" method="POST" style="display:inline;">
+                        <a href="{{ route('nasabah.show', $n->id_nasabah) }}" class="btn btn-info">Detail</a>
+                        <a href="{{ route('nasabah.edit', $n->id_nasabah) }}" class="btn btn-warning">Edit</a>
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Hapus</button>
+                        <button type="submit" class="btn btn-danger">Delete</button>
                     </form>
                 </td>
             </tr>

@@ -18,5 +18,13 @@ class Rekening extends Model
         'saldo',
         'tanggal_pembukaan',
     ];
+    public function transaksi()
+    {
+        return $this->hasMany(Transaksi::class, 'nomor_rekening');
+    }
+    public function nasabah()
+    {
+        return $this->belongsTo(Nasabah::class, 'id_nasabah');
+    }
     
 }

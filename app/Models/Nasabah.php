@@ -20,4 +20,8 @@ class Nasabah extends Model
         'tanggal_lahir',
         'status_pekerjaan',
     ];
+    public function rekenings()
+    {
+        return $this->hasMany(Rekening::class, 'id_nasabah');
+    }
 }

@@ -36,15 +36,16 @@
 <div class="container">
     <h2>Rekening List</h2>
     <a href="{{ route('rekening.create') }}" class="btn btn-primary">Add Rekening</a>
-    <table class="table">
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th>Nomor Rekening</th>
                 <th>ID Nasabah</th>
+                <th>Nama Nasabah</th>
                 <th>Jenis Rekening</th>
                 <th>Saldo</th>
                 <th>Tanggal Pembukaan</th>
-                <th>Actions</th>
+                <th width="280px">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -52,13 +53,14 @@
             <tr>
                 <td>{{ $rekening->nomor_rekening }}</td>
                 <td>{{ $rekening->id_nasabah }}</td>
+                <td>{{ $rekening->nasabah->nama ?? ' - ' }}</td>
                 <td>{{ $rekening->jenis_rekening }}</td>
                 <td>{{ $rekening->saldo }}</td>
                 <td>{{ $rekening->tanggal_pembukaan }}</td>
                 <td>
-                    <a href="{{ route('rekening.show', $rekening->nomor_rekening) }}" class="btn btn-info">Detail</a>
-                    <a href="{{ route('rekening.edit', $rekening->nomor_rekening) }}" class="btn btn-warning">Edit</a>
                     <form action="{{ route('rekening.destroy', $rekening->nomor_rekening) }}" method="POST" style="display:inline-block;">
+                        <a href="{{ route('rekening.show', $rekening->nomor_rekening) }}" class="btn btn-info">Detail</a>
+                        <a href="{{ route('rekening.edit', $rekening->nomor_rekening) }}" class="btn btn-warning">Edit</a>
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger">Delete</button>

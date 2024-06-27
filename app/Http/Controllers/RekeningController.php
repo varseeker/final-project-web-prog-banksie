@@ -13,7 +13,7 @@ class RekeningController extends Controller
      */
     public function index()
     {
-        $rekenings = Rekening::all();
+        $rekenings = Rekening::with('nasabah')->get();
         return view('rekening.index', compact('rekenings'));
     }
 
@@ -31,7 +31,6 @@ class RekeningController extends Controller
      */
     public function store(Request $request)
     {
-        error_log($request);
         try {
             $data = $request->all();
             $data['saldo'] = str_replace(',', '', $data['saldo']); // Remove commas for validation

@@ -132,6 +132,9 @@
                                 {{ Auth::user()->name }}
                             </a>
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="/">
+                                    {{ __('Home') }}
+                                </a>
                                 <a class="dropdown-item" href="{{ route('logout') }}"
                                    onclick="event.preventDefault();
                                              document.getElementById('logout-form').submit();">
@@ -152,6 +155,7 @@
             <li><a href="{{ route('dashboard') }}"><i class="fas fa-home"></i> Dashboard</a></li>
             <li><a href="{{ route('nasabah.index') }}"><i class="fas fa-user"></i> Nasabah</a></li>
             <li><a href="{{ route('rekening.index') }}"><i class="fas fa-book"></i> Rekening</a></li>
+            <li><a href="{{ route('transaksi.index') }}"><i class="fas fa-book"></i> Transaksi</a></li>
         </ul>
     </div>
     <div class="main-content" id="main-content">
