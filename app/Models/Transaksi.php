@@ -14,8 +14,7 @@ class Transaksi extends Model
     public $incrementing = true;
     protected $fillable = [
         'nomor_rekening', 
-        'jenis_transaksi', 
-        'tanggal_transaksi', 
+        'jenis_transaksi',  
         'jumlah_transaksi'
     ];
     

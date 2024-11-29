@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\expenseBoards;
 use App\Http\Controllers\Controller;
+use App\Models\Rekening;
+use App\Models\Transaksi;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -12,43 +15,47 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // $totalSaldo = Account::sum('balance');
-        // $rekeningAktif = Account::where('status', 'active')->count();
-        // $transaksiTerbaru = Transaction::orderBy('created_at', 'desc')->limit(5)->get();
-        // $nasabahBaru = Account::where('created_at', '>=', Carbon::now()->subDays(7))->count();
-        // $totalSaldo = 0;
-        // $rekeningAktif = 0;
-        // $transaksiTerbaru = [];
-        // $nasabahBaru = 0;
-        // // Data for charts (assuming you have logic to get this data)
-        // $transaksiBulananLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-        // $transaksiBulananData = [100, 150, 200, 180, 120, 160]; // Replace with actual data logic
-        // $saldoRekeningLabels = ['Tabungan', 'Giro', 'Deposito'];
-        // $saldoRekeningData = [50, 30, 20]; // Replace with actual data logic
-        
-        $transaksiBulananLabels = ['Januari', 'Februari', 'Maret', 'April']; // Contoh data
-        $transaksiBulananData = [10, 20, 30, 40]; // Contoh data
-        $saldoRekeningLabels = ['Tabungan', 'Giro', 'Deposito'];
-        $saldoRekeningData = [50000, 30000, 20000];
-        $totalSaldo = 1000000;
-        $rekeningAktif = 150;
-        $transaksiTerbaru = [
-            (object) ['jenisTransaksi' => 'Transfer', 'jumlah' => 100000],
-            (object) ['jenisTransaksi' => 'Tarik Tunai', 'jumlah' => 200000]
-        ];
-        $nasabahBaru = 16;
-        
+        $user = Auth::user(); // Mendapatkan data pengguna yang sedang login
 
-        return view('home', compact(
-            'totalSaldo',
-            'rekeningAktif',
-            'transaksiTerbaru',
-            'nasabahBaru',
-            'transaksiBulananLabels',
-            'transaksiBulananData',
-            'saldoRekeningLabels',
-            'saldoRekeningData'
-        ));
+        if ($user->role === 'admin') {
+            // Logika untuk admin
+            $totalSaldo = Rekening::sum('saldo');
+            $rekeningAktif = Rekening::count();
+            $transaksiTerbaru = Transaksi::orderBy('created_at', 'desc')->limit(5)->get();
+            $nasabahBaru = Rekening::where('created_at', '>=', Carbon::now()->subDays(7))->count();
+
+            $transaksiBulananLabels = ['Januari', 'Februari', 'Maret', 'April']; // Contoh data
+            $transaksiBulananData = [10, 20, 30, 40]; // Contoh data
+            $saldoRekeningLabels = ['Tabungan', 'Giro', 'Deposito'];
+            $saldoRekeningData = [50000, 30000, 20000];
+
+            return view('home', compact(
+                'totalSaldo',
+                'rekeningAktif',
+                'transaksiTerbaru',
+                'nasabahBaru',
+                'transaksiBulananLabels',
+                'transaksiBulananData',
+                'saldoRekeningLabels',
+                'saldoRekeningData'
+            ));
+        } elseif ($user->role === 'nasabah') {
+            // Logika untuk nasabah
+            // Ambil data produk yang dimiliki oleh nasabah berdasarkan `id_nasabah`
+            $produkNasabah = DB::table('rekening')
+            ->join('produk', 'rekening.id_produk', '=', 'produk.id_produk')
+            ->where('rekening.id_nasabah', $user->id_nasabah)
+            ->select('rekening.nomor_rekening', 'rekening.saldo', 'produk.nama')
+            ->get();
+            
+            // Ambil daftar produk untuk dropdown Tambah Rekening
+            $produkList = DB::table('produk')->get();
+
+            return view('home', compact('produkNasabah', 'produkList'));
+        }
+
+        // Jika role tidak dikenali, kembalikan ke halaman error atau redirect
+        return redirect()->route('home')->withErrors(['message' => 'Role tidak dikenali.']);
     }
     /**
      * Display a listing of the resource.

@@ -81,5 +81,5 @@
             e.target.value = '';
         }
     });
-    </script>
+</script>
 @endsection

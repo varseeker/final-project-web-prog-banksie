@@ -13,16 +13,16 @@ return new class extends Migration
     {
         Schema::create('nasabah', function (Blueprint $table) {
             $table->id('id_nasabah');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
             $table->string('nama');
-            $table->text('alamat');
+            $table->string('alamat');
             $table->string('nomor_telepon');
-            $table->string('email');
+            $table->string('email')->unique();
             $table->date('tanggal_lahir');
             $table->string('status_pekerjaan');
             $table->timestamps();
         });
     }
-    
 
     /**
      * Reverse the migrations.

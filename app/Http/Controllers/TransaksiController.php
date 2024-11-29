@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Rekening;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TransaksiController extends Controller
 {
@@ -107,5 +108,68 @@ class TransaksiController extends Controller
 
         return redirect()->route('transaksi.index')
                         ->with('success', 'Transaksi deleted successfully');
+    }
+
+    public function submitTransfer(Request $request)
+    {
+        $request->validate([
+            'nomor_rekening_asal' => 'required|exists:rekening,nomor_rekening',
+            'bankTujuan' => 'required',
+            'nomor_rekening' => 'required',
+            'nominal' => 'required|numeric|min:0.01',
+        ]);
+    
+        $rekeningAsal = Rekening::where('nomor_rekening', $request->nomor_rekening_asal)->first();
+
+        // Cek saldo pengirim
+        if (bccomp($rekeningAsal->saldo, $request->nominal, 2) === -1) {
+            return back()->withErrors(['message' => 'Saldo tidak mencukupi untuk melakukan transfer.']);
+        }
+    
+        if ($request->bankTujuan === 'banksie') {
+            // Validasi nomor rekening tujuan
+            $rekeningTujuan = Rekening::where('nomor_rekening', $request->nomor_rekening)->first();
+        
+            // Pastikan rekening asal dan tujuan tidak sama
+            if ($rekeningAsal->nomor_rekening === $rekeningTujuan->nomor_rekening) {
+                return back()->withErrors(['message' => 'Rekening asal dan tujuan tidak boleh sama.']);
+            }
+    
+            if (!$rekeningTujuan) {
+                return back()->withErrors(['message' => 'Nomor rekening tujuan tidak ditemukan.']);
+            }
+    
+            // Lakukan transfer
+            DB::transaction(function () use ($rekeningAsal, $rekeningTujuan, $request) {
+                // Kurangi saldo pengirim dengan presisi
+                $rekeningAsal->saldo = bcsub($rekeningAsal->saldo, $request->nominal, 2);
+                $rekeningAsal->save();
+
+                // Tambah saldo penerima dengan presisi
+                $rekeningTujuan->saldo = bcadd($rekeningTujuan->saldo, $request->nominal, 2);
+                $rekeningTujuan->save();
+    
+                // Simpan data transaksi
+                Transaksi::create([
+                    'jenis_transaksi' => 'Transfer',
+                    'nomor_rekening' => $rekeningAsal->nomor_rekening,
+                    'jumlah_transaksi' => $request->nominal,
+                ]);
+            });
+        } else {
+            // Bank lain: hanya menyimpan transaksi tanpa mengurangi/memvalidasi rekening tujuan
+            Transaksi::create([
+                'jenis_transaksi' => 'Transfer',
+                'nomor_rekening' => $rekeningAsal->nomor_rekening,
+                'jumlah_transaksi' => $request->nominal,
+            ]);
+            
+            // Kurangi saldo pengirim dengan presisi
+            $rekeningAsal->saldo = bcsub($rekeningAsal->saldo, $request->nominal, 2);
+            $rekeningAsal->save();
+        }
+    
+        return redirect()->back()->with('success', 'Transfer berhasil dilakukan.');
+
     }
 }

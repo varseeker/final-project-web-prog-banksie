@@ -63,7 +63,7 @@
             <td>{{ $transaksi->nomor_rekening }}</td>
             <td>{{ $transaksi->rekening->nasabah->nama ?? ' - ' }}</td>
             <td>{{ $transaksi->jenis_transaksi }}</td>
-            <td>{{ $transaksi->tanggal_transaksi }}</td>
+            <td>{{ $transaksi->created_at }}</td>
             <td>{{ $transaksi->jumlah_transaksi }}</td>
             <td>
                 {{-- <form action="{{ route('transaksi.destroy',$transaksi->id_transaksi) }}" method="POST"> --}}

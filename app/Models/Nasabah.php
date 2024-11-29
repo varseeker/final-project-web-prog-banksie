@@ -13,6 +13,7 @@ class Nasabah extends Model
     // Sisanya sesuaikan dengan kolom-kolom yang ada dalam tabel
     public $incrementing = true;
     protected $fillable = [
+        'user_id',
         'nama',
         'alamat',
         'nomor_telepon',
@@ -20,7 +21,11 @@ class Nasabah extends Model
         'tanggal_lahir',
         'status_pekerjaan',
     ];
-    public function rekenings()
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+    public function rekening()
     {
         return $this->hasMany(Rekening::class, 'id_nasabah');
     }

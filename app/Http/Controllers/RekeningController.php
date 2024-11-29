@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Nasabah;
 use App\Models\Rekening;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class RekeningController extends Controller
 {
@@ -13,7 +15,11 @@ class RekeningController extends Controller
      */
     public function index()
     {
-        $rekenings = Rekening::with('nasabah')->get();
+        $rekenings = DB::table('rekening')
+        ->join('produk', 'rekening.id_produk', '=', 'produk.id_produk')
+        ->join('nasabah', 'rekening.id_nasabah', '=', 'nasabah.id_nasabah')
+        ->select('rekening.nomor_rekening', 'rekening.saldo', 'produk.nama', 'produk.jenis', 'nasabah.id_nasabah', 'nasabah.nama', 'rekening.created_at')
+        ->get();
         return view('rekening.index', compact('rekenings'));
     }
 
@@ -95,5 +101,38 @@ class RekeningController extends Controller
     {
         $rekening->delete();
         return redirect()->route('rekening.index')->with('success', 'Rekening deleted successfully.');
+    }
+    
+    public function addRekening(Request $request)
+    {
+        $request->validate([
+            'id_produk' => 'required|exists:produk,id_produk',
+            'saldo_awal' => 'required|numeric|min:0',
+        ]);
+    
+        // Ambil nasabah yang sedang login
+        $user = Auth::user();
+    
+        // Generate nomor rekening (contoh: random 10 digit)
+        $nomorRekening = mt_rand(1000000000, 9999999999);
+    
+        // Simpan rekening baru
+        $rekening = Rekening::create([
+            'id_nasabah' => $user->id_nasabah, // id_nasabah diambil dari user login
+            'id_produk' => $request->id_produk,
+            'nomor_rekening' => $nomorRekening,
+            'saldo' => $request->saldo_awal,
+        ]);
+    
+        return redirect()->back()->with('success', 'Rekening berhasil ditambahkan.');
+    }
+
+    public function cekRekening($id)
+    {
+        $rekening = Rekening::find($id);
+        if (!$rekening) {
+            return response()->json(['message' => 'Rekening tidak ditemukan'], 200);
+        }
+        return response()->json($rekening, 200);
     }
 }

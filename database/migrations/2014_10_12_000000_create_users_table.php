@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->integer('id_nasabah')->nullable();
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->rememberToken();
+            $table->string('role');
             $table->timestamps();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->rememberToken();
         });
 
         
@@ -26,7 +28,16 @@ return new class extends Migration
             array(
             'name' => 'admin-service',
             'email' => 'admin@admin',
-            'password' => $password = Hash::make('admin123')
+            'password' => $password = Hash::make('admin123'),
+            'role' => 'admin',
+            )
+        );
+        DB::table('users')->insert(
+            array(
+            'name' => 'user1',
+            'email' => 'user1@user',
+            'password' => $password = Hash::make('user1'),
+            'role' => 'nasabah',
             )
         );
     }

@@ -53,10 +53,10 @@
             <tr>
                 <td>{{ $rekening->nomor_rekening }}</td>
                 <td>{{ $rekening->id_nasabah }}</td>
-                <td>{{ $rekening->nasabah->nama ?? ' - ' }}</td>
-                <td>{{ $rekening->jenis_rekening }}</td>
+                <td>{{ $rekening->nama ?? ' - ' }}</td>
+                <td>{{ $rekening->jenis }}</td>
                 <td>{{ $rekening->saldo }}</td>
-                <td>{{ $rekening->tanggal_pembukaan }}</td>
+                <td>{{ $rekening->created_at }}</td>
                 <td>
                     <form action="{{ route('rekening.destroy', $rekening->nomor_rekening) }}" method="POST" style="display:inline-block;">
                         <a href="{{ route('rekening.show', $rekening->nomor_rekening) }}" class="btn btn-info">Detail</a>
