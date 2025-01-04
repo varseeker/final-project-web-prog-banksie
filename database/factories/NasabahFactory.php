@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Nasabah;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class NasabahFactory extends Factory
@@ -12,12 +13,13 @@ class NasabahFactory extends Factory
     public function definition()
     {
         return [
-            'nama' => $this->faker->name,
-            'alamat' => $this->faker->address,
-            'nomor_telepon' => $this->faker->phoneNumber,
-            'email' => $this->faker->safeEmail,
-            'tanggal_lahir' => $this->faker->date('Y-m-d'),
-            'status_pekerjaan' => $this->faker->jobTitle,
+            'user_id' => User::factory(),
+            'nama' => $this->faker->name(),
+            'alamat' => $this->faker->address(),
+            'nomor_telepon' => $this->faker->phoneNumber(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'tanggal_lahir' => $this->faker->date(),
+            'status_pekerjaan' => $this->faker->jobTitle(),
         ];
     }
 }

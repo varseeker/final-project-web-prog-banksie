@@ -18,9 +18,11 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'id_nasabah',
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -42,4 +44,19 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function getRoleUser()
+    {
+        if ($this->role === 'admin') {
+            return $this->role === 'admin';
+        } else {
+            return $this->role === 'nasabah';
+
+        }
+    }
+
+    public function nasabah()
+    {
+        return $this->hasOne(Nasabah::class, 'id_nasabah');
+    }
 }

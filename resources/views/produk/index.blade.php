@@ -34,35 +34,41 @@
 
 </style>
 <div class="container">
-    <h1>Data Nasabah</h1>
-    <!-- <a href="{{ route('nasabah.create') }}" class="btn btn-primary mb-3">Tambah Nasabah</a> -->
+    <h1>Data Produk</h1>
+    <a href="{{ route('produk.create') }}" class="btn btn-primary mb-3">Tambah Produk</a>
+
+@if ($message = Session::get('success'))
+    <div class="alert alert-success">
+        <p>{{ $message }}</p>
+    </div>
+@endif
     <table class="table table-striped">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Nama</th>
-                <th>Alamat</th>
-                <th>Nomor Telepon</th>
-                <th>Email</th>
-                <th>Tanggal Lahir</th>
-                <th>Status Pekerjaan</th>
+                <th>Jenis</th>
+                <th>Deskripsi</th>
+                <th>Maks Bagi Hasil</th>
+                <th>Minimum Saldo</th>
+                <th>Biaya Admin</th>
                 <th width="280px">Actions</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($nasabah as $n)
+            @foreach($produk as $n)
             <tr>
-                <td>{{ $n->id_nasabah }}</td>
+                <td>{{ $n->id_produk }}</td>
                 <td>{{ $n->nama }}</td>
-                <td>{{ $n->alamat }}</td>
-                <td>{{ $n->nomor_telepon }}</td>
-                <td>{{ $n->email }}</td>
-                <td>{{ $n->tanggal_lahir }}</td>
-                <td>{{ $n->status_pekerjaan }}</td>
+                <td>{{ $n->jenis }}</td>
+                <td>{{ $n->deskripsi }}</td>
+                <td>{{ $n->suku_bunga }}</td>
+                <td>{{ $n->minimum_saldo }}</td>
+                <td>{{ $n->biaya_admin }}</td>
                 <td>
-                    <form action="{{ route('nasabah.destroy', $n->id_nasabah) }}" method="POST" style="display:inline;">
-                        <a href="{{ route('nasabah.show', $n->id_nasabah) }}" class="btn btn-info">Detail</a>
-                        <a href="{{ route('nasabah.edit', $n->id_nasabah) }}" class="btn btn-warning">Edit</a>
+                    <form action="{{ route('produk.destroy', $n->id_produk) }}" method="POST" style="display:inline;">
+                        <a href="{{ route('produk.show', $n->id_produk) }}" class="btn btn-info">Detail</a>
+                        <a href="{{ route('produk.edit', $n->id_produk) }}" class="btn btn-warning">Edit</a>
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger">Delete</button>
@@ -73,7 +79,7 @@
         </tbody>
     </table>
     <div class="d-flex justify-content-center mt-3">
-        {{ $nasabah->links('pagination::bootstrap-5') }}
+        {{ $produk->links('pagination::bootstrap-5') }}
     </div>
 </div>
 @endsection

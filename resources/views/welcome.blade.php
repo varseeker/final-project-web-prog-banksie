@@ -136,7 +136,7 @@
                   </div>
               </div>
               <div class="col-md-4 text-center">
-                <a href="#" class="btn btn-primary btn-lg">Buka Rekening Anda Sekarang</a>
+                <a href="#" class="btn btn-primary btn-lg" style="margin-top: 2rem;">Buka Rekening Anda Sekarang</a>
                 <p class="mt-3">Atau hubungi kami di <a href="tel:+62215551212">(+62) 21 555 1212</a></p>
               </div>
               </div>
