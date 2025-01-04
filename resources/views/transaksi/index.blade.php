@@ -35,7 +35,7 @@
 </style>
 <div class="container">
     <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-12 mb-2 mt-2">
             <h2>Transaksi</h2>
             <a class="btn btn-success" href="{{ route('transaksi.create') }}"> Tambah Transaksi</a>
         </div>
@@ -50,21 +50,25 @@
     <table class="table table-striped">
         <tr>
             <th>No</th>
-            <th>Nomor Rekening</th>
-            <th>Nama Nasabah</th>
+            <th>Nomor Rekening Asal</th>
+            <th>Nomor Rekening Tujuan</th>
+            <th>Bank Tujuan</th>
+            <th>Nama Nasabah Pengirim</th>
             <th>Jenis Transaksi</th>
-            <th>Tanggal Transaksi</th>
             <th>Jumlah Transaksi</th>
+            <th>Tanggal Transaksi</th>
             <th width="280px">Actions</th>
         </tr>
         @foreach ($transaksis as $transaksi)
         <tr>
             <td>{{ ++$i }}</td>
-            <td>{{ $transaksi->nomor_rekening }}</td>
+            <td>{{ $transaksi->nomor_rekening_asal }}</td>
+            <td>{{ $transaksi->nomor_rekening_tujuan }}</td>
+            <td>{{ $transaksi->bank_tujuan }}</td>
             <td>{{ $transaksi->rekening->nasabah->nama ?? ' - ' }}</td>
             <td>{{ $transaksi->jenis_transaksi }}</td>
-            <td>{{ $transaksi->created_at }}</td>
             <td>{{ $transaksi->jumlah_transaksi }}</td>
+            <td>{{ $transaksi->created_at }}</td>
             <td>
                 {{-- <form action="{{ route('transaksi.destroy',$transaksi->id_transaksi) }}" method="POST"> --}}
                     <a class="btn btn-info" href="{{ route('transaksi.show',$transaksi->id_transaksi) }}">Show</a>

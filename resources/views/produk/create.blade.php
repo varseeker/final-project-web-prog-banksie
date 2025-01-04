@@ -23,7 +23,7 @@
             <input type="textarea" class="form-control" id="deskripsi" name="deskripsi" required>
         </div>
         <div class="mb-3">
-            <label for="suku_bunga" class="form-label">Suku Bunga</label>
+            <label for="suku_bunga" class="form-label">Maks Bagi Hasil</label>
             <input type="text" class="form-control" id="suku_bunga" name="suku_bunga" required>
         </div>
         <div class="mb-3">

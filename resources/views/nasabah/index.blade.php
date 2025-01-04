@@ -35,7 +35,7 @@
 </style>
 <div class="container">
     <h1>Data Nasabah</h1>
-    <a href="{{ route('nasabah.create') }}" class="btn btn-primary mb-3">Tambah Nasabah</a>
+    <!-- <a href="{{ route('nasabah.create') }}" class="btn btn-primary mb-3">Tambah Nasabah</a> -->
     <table class="table table-striped">
         <thead>
             <tr>

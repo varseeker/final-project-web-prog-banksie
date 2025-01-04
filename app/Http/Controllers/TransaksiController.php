@@ -39,28 +39,64 @@ class TransaksiController extends Controller
         $request->merge(['jumlah_transaksi' => $data['jumlah_transaksi']]);
         $request->validate([
             'nomor_rekening' => 'required|exists:rekening,nomor_rekening',
+            'bank_tujuan' => 'required',
+            'nomor_rekening_tujuan' => 'required',
             'jenis_transaksi' => 'required',
-            'tanggal_transaksi' => 'required',
-            'jumlah_transaksi' => 'required|numeric',
+            'jumlah_transaksi' => 'required|numeric|min:0',
         ]);
 
         $rekening = Rekening::where('nomor_rekening', $request->nomor_rekening)->first();
-
-        if ($request->jenis_transaksi == 'Payment' && $rekening->saldo < $request->jumlah_transaksi) {
-            return redirect()->route('transaksi.create')
-                ->with('error', 'Saldo tidak mencukupi untuk melakukan pembayaran.');
+        if (bccomp($rekening->saldo, $request->nominal, 2) === -1) {
+            return back()->withErrors(['message' => 'Saldo tidak mencukupi untuk melakukan transfer.']);
         }
+    
+        if ($request->bank_tujuan === 'Banksie') {
+            // Validasi nomor rekening tujuan
+            $rekeningTujuan = Rekening::where('nomor_rekening', $request->nomor_rekening_tujuan)->first();
+        
+            // Pastikan rekening asal dan tujuan tidak sama
+            if ($rekening->nomor_rekening === $rekeningTujuan->nomor_rekening) {
+                return back()->withErrors(['message' => 'Rekening asal dan tujuan tidak boleh sama.']);
+            }
+    
+            if (!$rekeningTujuan) {
+                return back()->withErrors(['message' => 'Nomor rekening tujuan tidak ditemukan.']);
+            }
+    
+            // Lakukan transfer
+            DB::transaction(function () use ($rekening, $rekeningTujuan, $request) {
+                // Kurangi saldo pengirim dengan presisi
+                $rekening->saldo = bcsub($rekening->saldo, $request->jumlah_transaksi, 2);
+                $rekening->save();
 
-        if ($request->jenis_transaksi == 'Top Up') {
-            $rekening->saldo += $request->jumlah_transaksi;
-        } else if ($request->jenis_transaksi == 'Payment') {
-            $rekening->saldo -= $request->jumlah_transaksi;
+                // Tambah saldo penerima dengan presisi
+                $rekeningTujuan->saldo = bcadd($rekeningTujuan->saldo, $request->jumlah_transaksi, 2);
+                $rekeningTujuan->save();
+    
+                // Simpan data transaksi
+                Transaksi::create([
+                    'nomor_rekening_asal' => $rekening->nomor_rekening,
+                    'nomor_rekening_tujuan' => $rekeningTujuan->nomor_rekening,
+                    'bank_tujuan' => 'Banksie',
+                    'jenis_transaksi' => $request->jenis_transaksi,
+                    'jumlah_transaksi' => $request->jumlah_transaksi
+                ]);
+            });
+        } else {
+            // Bank lain: hanya menyimpan transaksi tanpa mengurangi/memvalidasi rekening tujuan
+            Transaksi::create([
+                'nomor_rekening_asal' => $rekening->nomor_rekening,
+                'nomor_rekening_tujuan' => $request->nomor_rekening_tujuan,
+                'bank_tujuan' => 'Lainnya',
+                'jenis_transaksi' => $request->jenis_transaksi,
+                'jumlah_transaksi' => $request->jumlah_transaksi
+            ]);
+            
+            // Kurangi saldo pengirim dengan presisi
+            $rekening->saldo = bcsub($rekening->saldo, $request->jumlah_transaksi, 2);
+            $rekening->save();
+
         }
-
-        $rekening->save();
-
-        Transaksi::create($request->all());
-
         return redirect()->route('transaksi.index')
             ->with('success', 'Transaksi created successfully.');
     }
@@ -70,7 +106,13 @@ class TransaksiController extends Controller
      */
     public function show(Transaksi $transaksi)
     {
-        return view('transaksi.show', compact('transaksi'));
+        $resultTransaksi = DB::table('transaksi')
+        ->join('rekening', 'rekening.nomor_rekening', '=', 'transaksi.nomor_rekening_asal')
+        ->join('nasabah', 'nasabah.id_nasabah', '=', 'rekening.id_nasabah')
+        ->where('transaksi.id_transaksi', $transaksi->id_transaksi)
+        ->select('transaksi.nomor_rekening_asal', 'transaksi.nomor_rekening_tujuan', 'transaksi.bank_tujuan', 'rekening.saldo', 'nasabah.nama', 'transaksi.jumlah_transaksi', 'transaksi.jenis_transaksi', 'transaksi.created_at')
+        ->first();
+        return view('transaksi.show', compact('resultTransaksi'));
     }
 
     /**
@@ -94,7 +136,6 @@ class TransaksiController extends Controller
         ]);
 
         $transaksi->update($request->all());
-
         return redirect()->route('transaksi.index')
                         ->with('success', 'Transaksi updated successfully');
     }
@@ -114,9 +155,9 @@ class TransaksiController extends Controller
     {
         $request->validate([
             'nomor_rekening_asal' => 'required|exists:rekening,nomor_rekening',
-            'bankTujuan' => 'required',
-            'nomor_rekening' => 'required',
-            'nominal' => 'required|numeric|min:0.01',
+            'nomor_rekening_tujuan' => 'required',
+            'bank_tujuan' => 'required',
+            'nominal' => 'required|numeric|min:0',
         ]);
     
         $rekeningAsal = Rekening::where('nomor_rekening', $request->nomor_rekening_asal)->first();
@@ -126,9 +167,9 @@ class TransaksiController extends Controller
             return back()->withErrors(['message' => 'Saldo tidak mencukupi untuk melakukan transfer.']);
         }
     
-        if ($request->bankTujuan === 'banksie') {
+        if ($request->bank_tujuan === 'Banksie') {
             // Validasi nomor rekening tujuan
-            $rekeningTujuan = Rekening::where('nomor_rekening', $request->nomor_rekening)->first();
+            $rekeningTujuan = Rekening::where('nomor_rekening', $request->nomor_rekening_tujuan)->first();
         
             // Pastikan rekening asal dan tujuan tidak sama
             if ($rekeningAsal->nomor_rekening === $rekeningTujuan->nomor_rekening) {
@@ -152,7 +193,9 @@ class TransaksiController extends Controller
                 // Simpan data transaksi
                 Transaksi::create([
                     'jenis_transaksi' => 'Transfer',
-                    'nomor_rekening' => $rekeningAsal->nomor_rekening,
+                    'nomor_rekening_asal' => $rekeningAsal->nomor_rekening,
+                    'nomor_rekening_tujuan' => $rekeningTujuan->nomor_rekening,
+                    'bank_tujuan' => 'Banksie',
                     'jumlah_transaksi' => $request->nominal,
                 ]);
             });
@@ -160,7 +203,9 @@ class TransaksiController extends Controller
             // Bank lain: hanya menyimpan transaksi tanpa mengurangi/memvalidasi rekening tujuan
             Transaksi::create([
                 'jenis_transaksi' => 'Transfer',
-                'nomor_rekening' => $rekeningAsal->nomor_rekening,
+                'nomor_rekening_asal' => $rekeningAsal->nomor_rekening,
+                'nomor_rekening_tujuan' => $request->nomor_rekening_tujuan,
+                'bank_tujuan' => $request->bank_tujuan,
                 'jumlah_transaksi' => $request->nominal,
             ]);
             

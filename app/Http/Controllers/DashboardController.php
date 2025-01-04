@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\expenseBoards;
 use App\Http\Controllers\Controller;
+use App\Models\Nasabah;
 use App\Models\Rekening;
 use App\Models\Transaksi;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -50,12 +52,93 @@ class DashboardController extends Controller
             
             // Ambil daftar produk untuk dropdown Tambah Rekening
             $produkList = DB::table('produk')->get();
+            $historyTrx = Transaksi::with('rekening')->latest()->get();
 
             return view('home', compact('produkNasabah', 'produkList'));
         }
 
         // Jika role tidak dikenali, kembalikan ke halaman error atau redirect
         return redirect()->route('home')->withErrors(['message' => 'Role tidak dikenali.']);
+    }
+
+    /**
+     * Show the form for editing the specified user.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function editCurrentUser($id)
+    {
+        $user = Nasabah::with('user')->find($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        return view('profile', compact('user'));
+    }
+
+    /**
+     * Update the specified user in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateCurrentUser(Request $request, $id)
+    {
+        $user = Nasabah::with('user')->find($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $data = $request->validate([
+            'status_pekerjaan' => ['sometimes', 'string', 'max:255'],
+            'noTelepon' => ['sometimes', 'string', 'max:15'],
+            'email' => ['sometimes', 'string', 'email', 'max:255', 'unique:users,email,' . $user->user_id],
+        ]);
+
+        \DB::beginTransaction();
+
+        try {
+            $user->update([
+                'status_pekerjaan' => $data['status_pekerjaan'] ?? $user->status_pekerjaan,
+                'nomor_telepon' => $data['noTelepon'] ?? $user->nomor_telepon,
+                'email' => $data['email'] ?? $user->email,
+            ]);
+
+            $user->user->update([
+                'email' => $data['email'] ?? $user->user->email,
+            ]);
+
+            \DB::commit();
+
+            return redirect()->route('dashboard')->with('success', 'Berhasil Update data Profile.');
+
+        } catch (\Exception $e) {
+            \DB::rollBack();
+
+            \Log::error('Update Error: ' . $e->getMessage());
+
+            return response()->json(['message' => $e], 500);
+        }
+    }
+    
+    public function getHistoryByRekening(Request $request)
+    {
+        // Ambil nomor rekening yang dikirimkan
+        $rekening = $request->input('nomor_rekening');
+
+        // Ambil data transaksi yang sesuai dengan nomor rekening
+        $transactions = Transaksi::where('nomor_rekening_asal', $rekening)
+            ->orWhere('nomor_rekening_tujuan', $rekening)
+            ->with('rekening')
+            ->latest()
+            ->get();
+
+        // Kembalikan response JSON untuk data transaksi
+        return response()->json($transactions);
     }
     /**
      * Display a listing of the resource.

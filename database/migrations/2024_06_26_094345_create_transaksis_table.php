@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('transaksi', function (Blueprint $table) {
             $table->id('id_transaksi');
-            $table->string('nomor_rekening');
-            $table->enum('jenis_transaksi', ['beli/topup', 'jual', 'transfer']);
+            $table->string('nomor_rekening_asal');
+            $table->string('nomor_rekening_tujuan');
+            $table->string('bank_tujuan');
+            $table->enum('jenis_transaksi', ['Top Up/Beli', 'Payment/Jual', 'Transfer']);
             $table->decimal('jumlah_transaksi', 15, 2);
             $table->timestamps();
-
-            $table->foreign('nomor_rekening')->references('nomor_rekening')->on('rekening')->onDelete('cascade');
+            $table->foreign('nomor_rekening_asal')->references('nomor_rekening')->on('rekening')->onDelete('cascade');
         });
     }
 

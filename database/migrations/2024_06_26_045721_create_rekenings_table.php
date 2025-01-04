@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('id_nasabah')->constrained('nasabah', 'id_nasabah')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('id_produk')->constrained('produk', 'id_produk')->onDelete('cascade')->onUpdate('cascade');
             $table->decimal('saldo', 15, 2);
-            $table->date('tanggal_pembukaan');
             $table->timestamps();
         });
     }

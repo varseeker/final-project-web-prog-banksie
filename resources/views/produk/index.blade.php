@@ -49,7 +49,7 @@
                 <th>Nama</th>
                 <th>Jenis</th>
                 <th>Deskripsi</th>
-                <th>Suku Bunga</th>
+                <th>Maks Bagi Hasil</th>
                 <th>Minimum Saldo</th>
                 <th>Biaya Admin</th>
                 <th width="280px">Actions</th>

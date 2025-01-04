@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Nasabah;
+use App\Models\Produk;
 use App\Models\Rekening;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -63,7 +64,14 @@ class RekeningController extends Controller
      */
     public function show(Rekening $rekening)
     {
-        return view('rekening.show', compact('rekening'));
+        
+        $rekening_selected = DB::table('rekening')
+        ->join('produk', 'rekening.id_produk', '=', 'produk.id_produk')
+        ->join('nasabah', 'rekening.id_nasabah', '=', 'nasabah.id_nasabah')
+        ->where('rekening.nomor_rekening', $rekening->nomor_rekening)
+        ->select('nasabah.nama as nama_nasabah', 'nasabah.id_nasabah', 'rekening.nomor_rekening', 'rekening.saldo', 'produk.nama', 'produk.jenis', 'produk.deskripsi', 'rekening.created_at')
+        ->first();
+        return view('rekening.show', compact('rekening_selected'));
     }
 
     /**
@@ -109,23 +117,31 @@ class RekeningController extends Controller
             'id_produk' => 'required|exists:produk,id_produk',
             'saldo_awal' => 'required|numeric|min:0',
         ]);
-    
-        // Ambil nasabah yang sedang login
         $user = Auth::user();
-    
-        // Generate nomor rekening (contoh: random 10 digit)
-        $nomorRekening = mt_rand(1000000000, 9999999999);
-    
-        // Simpan rekening baru
-        $rekening = Rekening::create([
-            'id_nasabah' => $user->id_nasabah, // id_nasabah diambil dari user login
-            'id_produk' => $request->id_produk,
-            'nomor_rekening' => $nomorRekening,
-            'saldo' => $request->saldo_awal,
-        ]);
-    
-        return redirect()->back()->with('success', 'Rekening berhasil ditambahkan.');
-    }
+        $produk = Produk::find($request->id_produk);
+
+        $biayaAdmin = $produk->biaya_admin;
+        if ($request->saldo_awal < $biayaAdmin) {
+            return redirect()->back()->with('error', 'Saldo awal tidak cukup untuk dikurangi biaya admin.');
+        }
+        $saldoAkhir = $request->saldo_awal - $biayaAdmin;
+        if ($produk->minimum_saldo > $saldoAkhir) {
+            return redirect()->back()->with('error', 'Saldo awal harus lebih besar dari saldo minimum produk setelah di kurangi biaya admin.');
+        } else {
+            // Generate nomor rekening (contoh: random 10 digit)
+            $nomorRekening = mt_rand(1000000000, 9999999999);
+        
+            // Simpan rekening baru
+            Rekening::create([
+                'id_nasabah' => $user->id_nasabah, // id_nasabah diambil dari user login
+                'id_produk' => $request->id_produk,
+                'nomor_rekening' => $nomorRekening,
+                'saldo' => $saldoAkhir,
+            ]);
+        
+            return redirect()->back()->with('success', 'Rekening berhasil ditambahkan.');
+        }
+    }    
 
     public function cekRekening($id)
     {

@@ -13,13 +13,15 @@ class Transaksi extends Model
     // Sisanya sesuaikan dengan kolom-kolom yang ada dalam tabel
     public $incrementing = true;
     protected $fillable = [
-        'nomor_rekening', 
+        'nomor_rekening_asal',
+        'nomor_rekening_tujuan',
+        'bank_tujuan',
         'jenis_transaksi',  
         'jumlah_transaksi'
     ];
     
     public function rekening()
     {
-        return $this->belongsTo(Rekening::class, 'nomor_rekening');
+        return $this->belongsTo(Rekening::class, 'nomor_rekening_asal', 'nomor_rekening');
     }
 }

@@ -14,6 +14,7 @@ class Nasabah extends Model
     public $incrementing = true;
     protected $fillable = [
         'user_id',
+        'noIdentitas',
         'nama',
         'alamat',
         'nomor_telepon',

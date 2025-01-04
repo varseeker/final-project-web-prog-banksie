@@ -25,7 +25,11 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth'])->group(function () {
     // Route::get('/home', [App\Http\Controllers\HomeController::class,'index'])->name('home');
     
+    
     Route::get('/dashboard', [App\Http\Controllers\DashboardController::class,'index'])->name('dashboard');
+    Route::get('/transaksiHistory', [App\Http\Controllers\DashboardController::class,'getHistoryByRekening'])->name('transaksiHistory');
+    Route::get('/profile/{id}/edit', [App\Http\Controllers\DashboardController::class,'editCurrentUser'])->name('profile');
+    Route::match(['put', 'patch'],'/profile/{id}', [App\Http\Controllers\DashboardController::class, 'updateCurrentUser'])->name('profile.edit-save');
     Route::post('/submitTransfer', [App\Http\Controllers\TransaksiController::class,'submitTransfer'])->name('transfer.submitTransfer');
     Route::post('/addRekening', [App\Http\Controllers\RekeningController::class,'addRekening'])->name('rekening.addRekening');
     Route::get('/cek-rekening/{id}', [RekeningController::class, 'cekRekening']);

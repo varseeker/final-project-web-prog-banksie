@@ -20,7 +20,7 @@ class Rekening extends Model
     ];
     public function transaksi()
     {
-        return $this->hasMany(Transaksi::class, 'nomor_rekening');
+        return $this->hasMany(Transaksi::class, 'nomor_rekening_asal');
     }
     public function produk()
     {

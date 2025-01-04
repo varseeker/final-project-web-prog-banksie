@@ -9,6 +9,7 @@ use App\Models\Nasabah;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
@@ -40,6 +41,7 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
+            'noIdentitas' => ['required', 'string', 'max:255', 'min:16'],
             'nama' => ['required', 'string', 'max:255'],
             'tglLahir' => ['required', 'date'],
             'alamat' => ['required', 'string', 'max:255'],
@@ -62,6 +64,7 @@ class RegisterController extends Controller
         try {
             // Insert into `nasabah` table
             $nasabah = Nasabah::create([
+                'noIdentitas' => $data['noIdentitas'],
                 'nama' => $data['nama'],
                 'alamat' => $data['alamat'],
                 'nomor_telepon' => $data['noTelepon'],

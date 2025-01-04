@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('nasabah', function (Blueprint $table) {
             $table->id('id_nasabah');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
             $table->string('nama');
+            $table->string('noIdentitas');
             $table->string('alamat');
             $table->string('nomor_telepon');
             $table->string('email')->unique();
