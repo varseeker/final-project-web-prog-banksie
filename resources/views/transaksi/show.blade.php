@@ -12,26 +12,38 @@
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="form-group">
-                <strong>Nomor Rekening:</strong>
-                {{ $transaksi->nomor_rekening }}
+                <strong>Nomor Rekening Asal:</strong>
+                {{ $resultTransaksi->nomor_rekening_asal }} - {{ $resultTransaksi->nama }}
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="form-group">
+                <strong>Nomor Rekening Tujuan:</strong>
+                {{ $resultTransaksi->nomor_rekening_tujuan }}
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="form-group">
+                <strong>Bank Tujuan:</strong>
+                {{ $resultTransaksi->bank_tujuan }}
             </div>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="form-group">
                 <strong>Jenis Transaksi:</strong>
-                {{ $transaksi->jenis_transaksi }}
-            </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Tanggal Transaksi:</strong>
-                {{ $transaksi->tanggal_transaksi }}
+                {{ $resultTransaksi->jenis_transaksi }}
             </div>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="form-group">
                 <strong>Jumlah Transaksi:</strong>
-                {{ $transaksi->jumlah_transaksi }}
+                {{ $resultTransaksi->jumlah_transaksi }}
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="form-group">
+                <strong>Tanggal Transaksi:</strong>
+                {{ $resultTransaksi->created_at }}
             </div>
         </div>
     </div>

@@ -14,13 +14,17 @@ class Rekening extends Model
     public $incrementing = true;
     protected $fillable = [
         'id_nasabah',
-        'jenis_rekening',
+        'id_produk',
+        'nomor_rekening',
         'saldo',
-        'tanggal_pembukaan',
     ];
     public function transaksi()
     {
-        return $this->hasMany(Transaksi::class, 'nomor_rekening');
+        return $this->hasMany(Transaksi::class, 'nomor_rekening_asal');
+    }
+    public function produk()
+    {
+        return $this->belongsTo(Produk::class, 'id_produk');
     }
     public function nasabah()
     {
