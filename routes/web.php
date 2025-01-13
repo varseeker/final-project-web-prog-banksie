@@ -22,10 +22,7 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::middleware(['auth'])->group(function () {
-    // Route::get('/home', [App\Http\Controllers\HomeController::class,'index'])->name('home');
-    
-    
+Route::middleware(['auth'])->group(function () {   
     Route::get('/dashboard', [App\Http\Controllers\DashboardController::class,'index'])->name('dashboard');
     Route::get('/transaksiHistory', [App\Http\Controllers\DashboardController::class,'getHistoryByRekening'])->name('transaksiHistory');
     Route::get('/profile/{id}/edit', [App\Http\Controllers\DashboardController::class,'editCurrentUser'])->name('profile');
@@ -37,15 +34,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('produk', ProdukController::class);
     Route::resource('rekening', RekeningController::class);
     Route::resource('transaksi', TransaksiController::class);
-
-    // Route::post('/board', [App\Http\Controllers\ExpenseBoardsController::class,'store']);
-    // Route::delete('/board', [App\Http\Controllers\ExpenseBoardsController::class,'destroy']);
-    // Route::patch('/board', [App\Http\Controllers\ExpenseBoardsController::class,'update']);
-
-    // Route::get('/board/{id}', [App\Http\Controllers\ExpenseBoardsController::class,'index'])->name('board-index');
-    // Route::patch('/board/{id}', [App\Http\Controllers\ExpenseItemsController::class,'update']);
-    // Route::delete('/board/{id}', [App\Http\Controllers\ExpenseItemsController::class,'destroy']);
-    // Route::post('/board/{id}', [App\Http\Controllers\ExpenseItemsController::class,'store']);
 });
 
 Route::get('/', function () {

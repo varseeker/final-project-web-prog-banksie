@@ -284,7 +284,7 @@
             const bankTujuan = document.getElementById('bank_tujuan').value;
             const noRekening = document.getElementById('nomor_rekening_tujuan');
             
-            if (bankTujuan === 'banksie') {
+            if (bankTujuan === 'Banksie') {
                 noRekening.addEventListener('blur', validateRekening);
             } else {
                 noRekening.removeEventListener('blur', validateRekening);
